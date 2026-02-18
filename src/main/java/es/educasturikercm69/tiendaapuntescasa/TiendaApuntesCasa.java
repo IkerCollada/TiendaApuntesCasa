@@ -41,12 +41,14 @@ public class TiendaApuntesCasa {
     public static void main(String[] args) {
         TiendaApuntesCasa t2026 = new TiendaApuntesCasa();
         t2026.cargaDatos();
-        t2026.menu();
+        //t2026.menu();
         //t2026.uno();
         //t2026.dos();
         //t2026.tres();
         //t2026.cuatro();
         //t2026.cinco();
+        //t2026.listadoConStreams();
+        t2026.repasoStreams2();
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENUS">
@@ -169,7 +171,7 @@ public class TiendaApuntesCasa {
             try {
                 switch (opcion) {
                 case 1:
-                    //nuevoPedido();
+                    nuevoPedido();
                     break;
                 case 2:
                     listadoPedidos();
@@ -222,7 +224,7 @@ public class TiendaApuntesCasa {
         do{
             System.out.println("idArticulo (IDENTIFICADO): ");
             idArticulo = sc.next();
-        }while(!idArticulo.matches("[1-6][-][0-9][0-9]") || articulos.containsKey(idArticulo));
+        }while(!idArticulo.matches("[1-6][-][0-9][0-9]") || articulos.containsKey(idArticulo)); //ContainsKey es si ya hay un string con el mismo id
         System.out.println("DESCRIPCION");
         sc.nextLine(); //para limpiar
         descripcion = sc.nextLine();
@@ -244,21 +246,66 @@ public class TiendaApuntesCasa {
     }
     
     private void bajaArticulos(){
+        String idArticulo;
+        do {            
+            System.out.println("ID del artículo a poner de baja: ");
+             idArticulo = sc.next();
+        } while (!articulos.containsKey(idArticulo));
         
+        articulos.remove(idArticulo); //Al ser un HashMap, el id nos vale, ahorrando bucles para encontrar la posición.
+        System.out.println("- Articulo eliminado -");
     }
     
     private void reposicionArticulos(){
+        String idArticulo, existencias;
+        do {            
+            System.out.println("ID del artículo a reponer: ");
+            idArticulo = sc.next();
+        } while (!articulos.containsKey(idArticulo));
+        
+        do {            
+            System.out.println("Existencias: ");
+            existencias = sc.next();
+        } while (!MetodosAux.esInt(existencias));
+        
+        //- En proceso -
         
     }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="CLIENTES">
-
     private void altaClientes(){
+        String idCliente, nombre, telefono, email;
+        do {            
+            System.out.println("DNI del nuevo cliente: ");
+            idCliente = sc.next();
+        } while (!MetodosAux.validarDNI(idCliente) || clientes.containsKey(idCliente));
+        sc.nextLine(); //para limpiar
+        System.out.println("Nombre: ");
+        nombre = sc.nextLine();
+        
+        do {            
+            System.out.println("Telefono:");
+            telefono = sc.next();
+        } while (!MetodosAux.esInt(telefono));
+        sc.nextLine(); //para limpiar
+        System.out.println("Email:");
+        email = sc.next();
+        
+        clientes.put(idCliente,new Cliente(idCliente, nombre, telefono, email));
+        System.out.println("- Cliente añadido -");
         
     }
+    
     private void bajaClientes(){
+        String idCliente;
+        do {
+            System.out.println("DNI del cliente al dar de baja:");
+            idCliente = sc.next();
+        } while (!MetodosAux.validarDNI(idCliente));
         
+        clientes.remove(idCliente);
+        System.out.println("- Cliente eliminado -");
     }
     private void modificarClientes(){
         
@@ -553,14 +600,13 @@ public class TiendaApuntesCasa {
                 .forEach(a->System.out.println(a));
         
         System.out.println("\n\nPEDIDOS ORDENADOS POR IMPORTE TOTAL");
-       /*pedidos.stream()
-                .sorted(Comparator.comparing(p -> totalPedido(p)))
-                .forEach(p->System.out.println(p + "- Total: " totalPedido(p)));*/
+       pedidos.stream().sorted(Comparator.comparing(p -> totalPedido((Pedido)p)).reversed())
+                .forEach(p -> System.out.println(p + " - Total: " + totalPedido(p)));
+                       
                 
        System.out.println("\n\nPEDIDOS DE MAS DE 1000 EUROS (filter) POR LA FECHA DEL PEDIDO");
-                /*pedidos.stream().filter(p->totalPedido(p)>1000)
-                        .sorted(Comparator.comparing(Pedido::getFechaPedido))
-                        .forEach(p->System.out.println(p + "- Total: " + p.getFechaPedido());*/
+                pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido))
+                        .filter(p -> totalPedido(p) > 100).forEach(p -> System.out.println(p));
                 
         System.out.println("\n\n\nCONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - PODRIA PEDIR NOMBRE O DNI POR TECLADO");
         long numPedidos = pedidos.stream()
@@ -585,7 +631,105 @@ public class TiendaApuntesCasa {
                 System.out.println(numPedidosPorCliente);
         //SE DEBE IMPORTAR "Map" Y "Collectors".
         System.out.println("\n\nTOTAL DE VENTAS POR PRODUCTO (groupingBy)");
-    }  
+    }
+    
+    public void repasoStreams(){
+        System.out.println("ARTICULOS DE MENOS DE 100€ ORDENADOS POR PRECIO DE - A + ");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
+                .filter(a -> a.getPvp()<100).forEach(a -> System.out.println(a));
+        
+        System.out.println("\n\nPEDIDOS ORDENADOS POR EL IMPORTE TOTAL DEL PEDIDO "
+                + "DE - A + (usamos el método auxiliar totalPedido())");
+        pedidos.stream().sorted(Comparator.comparing(p -> totalPedido((Pedido)p)).reversed())
+                .forEach(p -> System.out.println(p + " - Total: " + totalPedido(p)));
+        
+        System.out.println("\n\nPEDIDOS DE MÁS DE 1000€ (filter) ORDENADOS POR LA FECHA DEL PEDIDO "
+                + "DE - A + ");
+        pedidos.stream().filter(p -> totalPedido(p) > 1000)
+                .sorted(Comparator.comparing(Pedido::getFechaPedido))
+                .forEach(p -> System.out.println(p));
+        
+        System.out.println("\n\nOrdenar por PVP de menor a mayor (ascendente, el más barato primero)");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
+                .forEach(a -> System.out.println(a));
+        
+        System.out.println("\n\nOrdenar por PVP de mayor a menor (descendente, el más caro primero)");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp).reversed())
+                .forEach(a -> System.out.println(a));
+        
+        System.out.println("\n\nOrdenar por descripción A → Z (ignorando mayúsculas/minúsculas)");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getDescripcion))
+                .forEach(a -> System.out.println(a));
+        
+        System.out.println("\n\nFiltrar artículos con existencias menores a 5 y "
+                + "ordenarlos por PVP descendente");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
+                .filter(a -> a.getExistencias() < 5)
+                .forEach(a -> System.out.println(a));
+        
+        System.out.println("\n\nListar clientes ordenados por nombre descendente (Z-A)");
+        
+        clientes.values().stream().sorted(Comparator.comparing(Cliente::getNombre).reversed())
+                .forEach(c -> System.out.println(c));
+        
+        //EJERCICIOS GENERADOS CON GROK 
+        
+        //(con artículos):
+        System.out.println("Mostrar los artículos cuyo ID empieza por \"4-\", "
+                + "ordenados por existencias de menor a mayor.");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getExistencias))
+                .filter(a -> a.getIdArticulo().contains("4-"))
+                .forEach(a -> System.out.println(a));
+        
+        System.out.println("Listar los artículos con existencias = 0, ordenados por descripción (Z → A).");
+        articulos.values().stream().sorted(Comparator.comparing(Articulo::getDescripcion))
+                .filter(a -> a.getExistencias() == 0)
+                .forEach(a -> System.out.println(a));
+        
+        //Con pedidos:
+        System.out.println("Listar todos los pedidos ordenados por fecha (más antiguo primero).");
+        pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido))
+                .forEach(p -> System.out.println(p));
+        
+        System.out.println("Mostrar solo los pedidos de este año (2026), "
+                + "ordenados por fecha descendente (el más reciente primero).");
+        pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido).reversed())
+                .filter(p -> p.getFechaPedido().getYear() == LocalDate.now().getYear())
+                .forEach(p -> System.out.println(p));
+        
+        System.out.println("Listar los pedidos que tienen más de 2 líneas en la cesta, ordenados por fecha ascendente.");
+        pedidos.stream().filter(p -> p.getCestaCompra().size() > 2)
+                .sorted(Comparator.comparing(Pedido::getFechaPedido))
+                .forEach(p -> System.out.println(p.getIDpedido() + " - líneas: " + p.getCestaCompra().size()));
+    
+        //Con clientes:
+        
+        System.out.println("Listar todos los clientes ordenados por nombre (A → Z).");
+        clientes.values().stream().sorted(Comparator.comparing(Cliente::getNombre))
+                .forEach(c -> System.out.println(c));
+    }
+    
+    public void repasoStreams2(){
+        //EJERCICIOS CON MÉTODOS DEL API PARA REALIZAR CALCULOS count() map() mapToInt() .collect(Collectors.groupingBy) ...
+        System.out.println("CONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - NOMBRE O DNI POR TECLADO");
+        String dni;
+        do {            
+            System.out.print("ID Cliente: ");
+            dni = sc.next();
+        } while (!MetodosAux.validarDNI(dni) && !clientes.containsKey(dni));
+        
+        String dni1 = dni; //String de paso, porque al acabar el bucle do-while, este no guarda el String en el Stream.
+        
+        long numPedidos = pedidos.stream()
+                .filter(p -> p.getClientePedido().getIDcliente().equalsIgnoreCase(dni1))
+                .count();
+        
+        System.out.println("Nº pedidos del cliente: " + clientes.get(dni).getNombre() + ": " + numPedidos);
+        
+        System.out.println("");
+        
+        
+    }
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="CARGA DATOS">

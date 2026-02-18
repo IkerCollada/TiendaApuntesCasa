@@ -9,9 +9,12 @@ package es.educasturikercm69.tiendaapuntescasa;
  * @author Iker
  */
 public class MetodosAux {
- /** Comprueba si un numero "s" es Int
-     * @param s numero a teclear
-     * @return true si es Int, false si no lo es*/
+    /** 
+     * Comprueba si un numero "s" es Int     
+     * @param s es el número que entregamos como string para validar
+     * @param n es el número que hallará si "s" se puede pasar de String a int.
+     * @return true si es Int, false si no lo es.
+     */
     public static boolean esInt(String s) {
         int n;
         try {
