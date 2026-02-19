@@ -49,6 +49,7 @@ public class TiendaApuntesCasa {
         //t2026.cinco();
         //t2026.listadoConStreams();
         t2026.repasoStreams2();
+        //t2026.repasoStreams3();
     }
     
     //<editor-fold defaultstate="collapsed" desc="MENUS">
@@ -634,84 +635,98 @@ public class TiendaApuntesCasa {
     }
     
     public void repasoStreams(){
-        System.out.println("ARTICULOS DE MENOS DE 100€ ORDENADOS POR PRECIO DE - A + ");
+        //REPASO CON FILTERS, SORTED Y FOREACH.
+        //Ej 1.
+        System.out.println("Ej 1. ARTICULOS DE MENOS DE 100€ ORDENADOS POR PRECIO DE - A +.");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
                 .filter(a -> a.getPvp()<100).forEach(a -> System.out.println(a));
         
-        System.out.println("\n\nPEDIDOS ORDENADOS POR EL IMPORTE TOTAL DEL PEDIDO "
+        //Ej 2.
+        System.out.println("\n\nEj 2. PEDIDOS ORDENADOS POR EL IMPORTE TOTAL DEL PEDIDO "
                 + "DE - A + (usamos el método auxiliar totalPedido())");
         pedidos.stream().sorted(Comparator.comparing(p -> totalPedido((Pedido)p)).reversed())
                 .forEach(p -> System.out.println(p + " - Total: " + totalPedido(p)));
         
-        System.out.println("\n\nPEDIDOS DE MÁS DE 1000€ (filter) ORDENADOS POR LA FECHA DEL PEDIDO "
+        //Ej 3.
+        System.out.println("\n\nEj 3. PEDIDOS DE MÁS DE 1000€ (filter) ORDENADOS POR LA FECHA DEL PEDIDO "
                 + "DE - A + ");
         pedidos.stream().filter(p -> totalPedido(p) > 1000)
                 .sorted(Comparator.comparing(Pedido::getFechaPedido))
                 .forEach(p -> System.out.println(p));
         
-        System.out.println("\n\nOrdenar por PVP de menor a mayor (ascendente, el más barato primero)");
+        //Ej 4.
+        System.out.println("\n\nEj 4. Ordenar por PVP de menor a mayor (ascendente, el más barato primero)");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
                 .forEach(a -> System.out.println(a));
         
-        System.out.println("\n\nOrdenar por PVP de mayor a menor (descendente, el más caro primero)");
+        //Ej 5.
+        System.out.println("\n\nEj 5. Ordenar por PVP de mayor a menor (descendente, el más caro primero)");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp).reversed())
                 .forEach(a -> System.out.println(a));
         
-        System.out.println("\n\nOrdenar por descripción A → Z (ignorando mayúsculas/minúsculas)");
+        //Ej 6.
+        System.out.println("\n\nEj 6. Ordenar por descripción A → Z (ignorando mayúsculas/minúsculas)");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getDescripcion))
                 .forEach(a -> System.out.println(a));
         
-        System.out.println("\n\nFiltrar artículos con existencias menores a 5 y "
+        //Ej 7.
+        System.out.println("\n\nEj 7. Filtrar artículos con existencias menores a 5 y "
                 + "ordenarlos por PVP descendente");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
                 .filter(a -> a.getExistencias() < 5)
                 .forEach(a -> System.out.println(a));
         
-        System.out.println("\n\nListar clientes ordenados por nombre descendente (Z-A)");
-        
+        //Ej 8.
+        System.out.println("\n\nEj 8. Listar clientes ordenados por nombre descendente (Z-A)");
         clientes.values().stream().sorted(Comparator.comparing(Cliente::getNombre).reversed())
                 .forEach(c -> System.out.println(c));
         
-        //EJERCICIOS GENERADOS CON GROK 
-        
-        //(con artículos):
-        System.out.println("Mostrar los artículos cuyo ID empieza por \"4-\", "
+        //EJERCICIOS GENERADOS CON GROK
+        System.out.println("\n\n----------GENERADO POR GROK----------");
+        //Con artículos:
+        //Ej 1
+        System.out.println("Ej 1. Mostrar los artículos cuyo ID empieza por \"4-\", "
                 + "ordenados por existencias de menor a mayor.");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getExistencias))
                 .filter(a -> a.getIdArticulo().contains("4-"))
                 .forEach(a -> System.out.println(a));
         
-        System.out.println("Listar los artículos con existencias = 0, ordenados por descripción (Z → A).");
+        //Ej 2.
+        System.out.println("Ej 2. Listar los artículos con existencias = 0, ordenados por descripción (Z → A).");
         articulos.values().stream().sorted(Comparator.comparing(Articulo::getDescripcion))
                 .filter(a -> a.getExistencias() == 0)
                 .forEach(a -> System.out.println(a));
         
         //Con pedidos:
-        System.out.println("Listar todos los pedidos ordenados por fecha (más antiguo primero).");
+        //Ej 3.
+        System.out.println("Ej 3. Listar todos los pedidos ordenados por fecha (más antiguo primero).");
         pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido))
                 .forEach(p -> System.out.println(p));
         
-        System.out.println("Mostrar solo los pedidos de este año (2026), "
+        //Ej 4.
+        System.out.println("Ej 4. Mostrar solo los pedidos de este año (2026), "
                 + "ordenados por fecha descendente (el más reciente primero).");
         pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido).reversed())
                 .filter(p -> p.getFechaPedido().getYear() == LocalDate.now().getYear())
                 .forEach(p -> System.out.println(p));
         
-        System.out.println("Listar los pedidos que tienen más de 2 líneas en la cesta, ordenados por fecha ascendente.");
+        //Ej 5.
+        System.out.println("Ej 5. Listar los pedidos que tienen más de 2 líneas en la cesta, ordenados por fecha ascendente.");
         pedidos.stream().filter(p -> p.getCestaCompra().size() > 2)
                 .sorted(Comparator.comparing(Pedido::getFechaPedido))
                 .forEach(p -> System.out.println(p.getIDpedido() + " - líneas: " + p.getCestaCompra().size()));
     
         //Con clientes:
-        
-        System.out.println("Listar todos los clientes ordenados por nombre (A → Z).");
+        //Ej 6.
+        System.out.println("Ej 6. Listar todos los clientes ordenados por nombre (A → Z).");
         clientes.values().stream().sorted(Comparator.comparing(Cliente::getNombre))
                 .forEach(c -> System.out.println(c));
     }
     
     public void repasoStreams2(){
-        //EJERCICIOS CON MÉTODOS DEL API PARA REALIZAR CALCULOS count() map() mapToInt() .collect(Collectors.groupingBy) ...
-        System.out.println("CONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - NOMBRE O DNI POR TECLADO");
+        //Ejercicios con  count() map() mapToInt() .collect(Collectors.groupingBy)...
+        //Ej 1.
+        System.out.println("CONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - NOMBRE O DNI POR TECLADO (EJ 1)");
         String dni;
         do {            
             System.out.print("ID Cliente: ");
@@ -726,7 +741,74 @@ public class TiendaApuntesCasa {
         
         System.out.println("Nº pedidos del cliente: " + clientes.get(dni).getNombre() + ": " + numPedidos);
         
-        System.out.println("");
+        //EJ 2.
+        System.out.println("\n\nCONTABILIZAR CUANTOS PEDIDOS HAY POR CLIENTE - "
+                + "PARA LAS AGRUPACIONES SON IDEALES LOS MAPAS PORQUE PUEDEN CONTENER 2 DATOS (EJ 2)");
+        Map <Cliente, Long> numPedidosPorCliente = pedidos.stream()
+                .collect(Collectors.groupingBy(Pedido :: getClientePedido, Collectors.counting()));
+        
+        /*Hacemos un map para cada cliente (Cliente) y sus pedidos (long).
+        El collect agrupa los pedidos de cada cliente, y el Collectors.groupingBy es la clave para
+        agruparlos a tu manera. En este caso los agrupas por pedidos de cada cliente (Pedido :: getClientePedido).
+        Collectors.counting cuenta pedidos de cada cliente.*/
+        for (Cliente c : numPedidosPorCliente.keySet()){ /*El .keySet() es como el .values() de un HashMap.
+                                                           Solo que sirve para tener en cuenta el nº de pedidos de cada cliente*/
+            System.out.println(c + " PEDIDOS CONTADOS: " + numPedidosPorCliente.get(c));
+        }
+        
+        //Ej 3.
+        System.out.println("\n\nTOTAL DE UNIDADES VENDIDAS DE UN ARTICULO EN TODOS LOS PEDIDOS. PODEMOS APLICARLO AL"
+                + "MÉTODO UNIDADES VENDIDAS QUE HABÍA QUE HACER EN EL EJERCICIO 4 DE LA ÚLTIMA PRUEBA (EJ 3)");
+        /*Para saber las unidades vendidas, necesitamos ver cuáles coinciden en el ArrayList pedidos y contabilizar los
+        totales de cada artículo determinado.*/
+        for (Articulo a : articulos.values()){
+            int total = 0;
+            for (Pedido p : pedidos){
+                total += p.getCestaCompra().stream().filter(l -> l.getArticulo().equals(a)) //condición para contabilizar
+                .mapToInt(LineaPedido :: getUnidades).sum();
+                /*El mapToInt hace que el programa solo se fije en una variable int de una clase.
+                En este caso LineaPedido sobre unidades.
+                
+                La gracia de este ejercicio es que, los artículos filtrados (los que son de la LineaPedido)
+                solo queremos las unidades. Para no complicarnos, le decimos al programa con el mapToInt que queremos
+                de cada LineaPedido las unidades del artículo filtrado anteriormente. Luego con el .sum() se suma al total.*/
+            }
+            System.out.println(a + " - TOTAL UNIDADES: " + total);
+        }
+        
+       //EJERCICIOS GENERADOS CON GROK
+        System.out.println("\n\n----------GENERADO POR GROK----------");
+       //Ej 1.
+        System.out.println("\n\nEj 1. Contabilizar el número de pedidos de un cliente específico (por DNI)");
+        do {
+            System.out.println("DNI cliente:");
+            dni = sc.next(); //ya tenemos el dni, por lo que no hace falta declarar otro String
+        } while (!MetodosAux.validarDNI(dni) && !clientes.containsKey(dni));
+        String dni2 = dni;
+        
+        long numPedidosCliente = pedidos.stream().filter(p -> p.getClientePedido().getIDcliente().equals(dni2))
+                .count();
+        
+        System.out.println(clientes.get(dni2).getNombre() + " tiene: " + numPedidosCliente);
+        
+        //Ej 2.
+        System.out.println("\n\nEj 2. Contabilizar el número de pedidos por cliente (para todos)");
+        Map <Cliente, long> totalPedidosCliente = pedidos.stream()
+                .collect(Collector.groupingBy(Pedido :: getClientePedido));
+            
+            
+        
+        
+        
+    }
+    
+    public void repasoStreams3(){
+        /*Ejercicios con flatMap() para colecciones anidadas, nuestro caso
+        pues pedidos es un ArrayList de <Pedido> y dentro de cada Pedido
+        hay una cestaCompra, que es un ArrayList de <Lineapedido>*/
+        
+        //Ej 1.
+        System.out.println("Ej 1. ");
         
         
     }
