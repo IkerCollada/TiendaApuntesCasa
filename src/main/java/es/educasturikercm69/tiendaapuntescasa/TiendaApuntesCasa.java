@@ -638,8 +638,9 @@ public class TiendaApuntesCasa {
         //REPASO CON FILTERS, SORTED Y FOREACH.
         //Ej 1.
         System.out.println("Ej 1. ARTICULOS DE MENOS DE 100€ ORDENADOS POR PRECIO DE - A +.");
-        articulos.values().stream().sorted(Comparator.comparing(Articulo::getPvp))
-                .filter(a -> a.getPvp()<100).forEach(a -> System.out.println(a));
+        articulos.values().stream().sorted(Comparator.comparing(Articulo :: getPvp)).filter(a -> a.getPvp() < 100)
+                .forEach(a -> System.out.println(a));
+        //El sorted es para ordenaciones de - a + y de a-z o viceversa (si pones .reversed).
         
         //Ej 2.
         System.out.println("\n\nEj 2. PEDIDOS ORDENADOS POR EL IMPORTE TOTAL DEL PEDIDO "
@@ -697,36 +698,41 @@ public class TiendaApuntesCasa {
                 .filter(a -> a.getExistencias() == 0)
                 .forEach(a -> System.out.println(a));
         
-        //Con pedidos:
         //Ej 3.
-        System.out.println("Ej 3. Listar todos los pedidos ordenados por fecha (más antiguo primero).");
+        System.out.println("\n\nEj 3. Contabilizar el número de artículos por PVP mayor a 100");
+        long articulosPVP = articulos.values().stream().filter(a -> a.getPvp() > 100).count();
+        
+        System.out.println("Hay " + articulosPVP + "con PVP mayor a 100.");
+        
+        //Con pedidos:
+        //Ej 4.
+        System.out.println("Ej 4. Listar todos los pedidos ordenados por fecha (más antiguo primero).");
         pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido))
                 .forEach(p -> System.out.println(p));
         
-        //Ej 4.
-        System.out.println("Ej 4. Mostrar solo los pedidos de este año (2026), "
-                + "ordenados por fecha descendente (el más reciente primero).");
-        pedidos.stream().sorted(Comparator.comparing(Pedido::getFechaPedido).reversed())
-                .filter(p -> p.getFechaPedido().getYear() == LocalDate.now().getYear())
-                .forEach(p -> System.out.println(p));
-        
         //Ej 5.
-        System.out.println("Ej 5. Listar los pedidos que tienen más de 2 líneas en la cesta, ordenados por fecha ascendente.");
+        System.out.println("Ej 5. Mostrar solo los pedidos de este año (2026), "
+                + "ordenados por fecha descendente (el más reciente primero).");
+        pedidos.stream().sorted(Comparator.comparing(Pedido :: getFechaPedido).reversed())
+                .filter(p -> p.getFechaPedido().getYear() == LocalDate.now().getYear());
+        
+        //Ej 6.
+        System.out.println("Ej 6. Listar los pedidos que tienen más de 2 líneas en la cesta, ordenados por fecha ascendente.");
         pedidos.stream().filter(p -> p.getCestaCompra().size() > 2)
                 .sorted(Comparator.comparing(Pedido::getFechaPedido))
                 .forEach(p -> System.out.println(p.getIDpedido() + " - líneas: " + p.getCestaCompra().size()));
     
         //Con clientes:
-        //Ej 6.
-        System.out.println("Ej 6. Listar todos los clientes ordenados por nombre (A → Z).");
+        //Ej 7.
+        System.out.println("Ej 7. Listar todos los clientes ordenados por nombre (A → Z).");
         clientes.values().stream().sorted(Comparator.comparing(Cliente::getNombre))
                 .forEach(c -> System.out.println(c));
     }
     
     public void repasoStreams2(){
-        //Ejercicios con  count() map() mapToInt() .collect(Collectors.groupingBy)...
+        //Ejercicios con  count() map, mapToInt() .collect(Collectors.groupingBy)...
         //Ej 1.
-        System.out.println("CONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - NOMBRE O DNI POR TECLADO (EJ 1)");
+        System.out.println("Ej 1. CONTABILIZAR LOS PEDIDOS DE UN DETERMINADO CLIENTE - NOMBRE O DNI POR TECLADO (EJ 1)");
         String dni;
         do {            
             System.out.print("ID Cliente: ");
@@ -742,8 +748,8 @@ public class TiendaApuntesCasa {
         System.out.println("Nº pedidos del cliente: " + clientes.get(dni).getNombre() + ": " + numPedidos);
         
         //EJ 2.
-        System.out.println("\n\nCONTABILIZAR CUANTOS PEDIDOS HAY POR CLIENTE - "
-                + "PARA LAS AGRUPACIONES SON IDEALES LOS MAPAS PORQUE PUEDEN CONTENER 2 DATOS (EJ 2)");
+        System.out.println("\n\nEj 2. CONTABILIZAR CUANTOS PEDIDOS HAY POR CLIENTE - "
+                + "PARA LAS AGRUPACIONES SON IDEALES LOS MAPAS PORQUE PUEDEN CONTENER 2 DATOS");
         Map <Cliente, Long> numPedidosPorCliente = pedidos.stream()
                 .collect(Collectors.groupingBy(Pedido :: getClientePedido, Collectors.counting()));
         
@@ -771,7 +777,8 @@ public class TiendaApuntesCasa {
                 
                 La gracia de este ejercicio es que, los artículos filtrados (los que son de la LineaPedido)
                 solo queremos las unidades. Para no complicarnos, le decimos al programa con el mapToInt que queremos
-                de cada LineaPedido las unidades del artículo filtrado anteriormente. Luego con el .sum() se suma al total.*/
+                de cada LineaPedido las unidades del artículo filtrado anteriormente. Luego con el .sum() se suma al total.
+                mapToInt es como el sorted, pero para los nº enteros.*/
             }
             System.out.println(a + " - TOTAL UNIDADES: " + total);
         }
@@ -793,23 +800,45 @@ public class TiendaApuntesCasa {
         
         //Ej 2.
         System.out.println("\n\nEj 2. Contabilizar el número de pedidos por cliente (para todos)");
-        Map <Cliente, long> totalPedidosCliente = pedidos.stream()
-                .collect(Collector.groupingBy(Pedido :: getClientePedido));
-            
-            
+        /*Map <Cliente, long> totalPedidosCliente = pedidos.stream()
+                .collect(Collectors.groupingBy(Pedido :: getClientePedido), Collectors.counting());
+        //El ejercicio está bien. Lo que falla es que ya existe ese map
+        for (Cliente c : totalPedidosCliente.keySet()) {
+            System.out.println("total del cliente: " + c.getNombre() + " es: " + totalPedidosCliente.get(c));
+        }*/
         
+        //Ej 3.
+        System.out.println("\n\nEj 3. Sumar el total de existencias de todos los artículos");
+        long totalExistencias = articulos.values().stream().mapToInt(Articulo :: getExistencias).sum();
         
-        
+        System.out.println("Hay " + totalExistencias + " existencias en todos los articulos");
     }
     
     public void repasoStreams3(){
         /*Ejercicios con flatMap() para colecciones anidadas, nuestro caso
         pues pedidos es un ArrayList de <Pedido> y dentro de cada Pedido
         hay una cestaCompra, que es un ArrayList de <Lineapedido>*/
-        
         //Ej 1.
-        System.out.println("Ej 1. ");
+        System.out.println("Ej 1. USUARIOS QUE HAN COMPRADO UN ARTÍCULO DETERMINADO incluyendo CUANTAS "
+                + "UNIDADES HAN COMPRADO (probamos con el artículo articulos.get(4-22))");
+        usuarios.values()
         
+        
+        
+        //EJERCICIOS GENERADOS CON GROK
+        System.out.println("\n\n----------GENERADO POR GROK----------");
+        //Ej 1 FLATMAP 
+        System.out.println("Ej 1. Sumar el total de unidades vendidas de un artículo específico");
+        String idArticulo;
+        do {
+            System.out.print("ID ARTICULO: ");
+            idArticulo = sc.next();
+        } while (!articulos.containsKey(idArticulo));
+        
+        long totales = pedidos.stream().flatMap(p ->
+                p.getCestaCompra().stream().filter(lp -> lp.getArticulo().getIdArticulo().equals(idArticulo))
+                .mapToInt(LineaPedido :: getUnidades).sum();
+        System.out.println("Total de unidades vendidas del artículo: " + ": " + totales);
         
     }
 //</editor-fold>
